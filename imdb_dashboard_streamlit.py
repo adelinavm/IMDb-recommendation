@@ -15,6 +15,82 @@ def load_data():
     df['rating'] = df['rating'].astype(float)
     return df
 
+# Tambahkan CSS custom agar UI lebih modern dan rapi
+def inject_custom_css():
+    st.markdown('''
+        <style>
+        :root {
+            --earth-bg1: #E7EFC7;
+            --earth-bg2: #AEC8A4;
+            --earth-accent: #8A784E;
+            --earth-primary: #8A784E;
+            --earth-secondary: #AEC8A4;
+            --earth-highlight: #E7EFC7;
+            --earth-dark: #4b4637;
+        }
+        .stApp {
+            background: linear-gradient(120deg, var(--earth-bg1) 0%, var(--earth-bg2) 100%);
+        }
+        .block-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .stHeader, .stSubheader, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+            color: var(--earth-primary);
+        }
+        .stDataFrame, .stTable {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(138, 120, 78, 0.08);
+            border: 1px solid var(--earth-accent);
+        }
+        .stButton>button, .stTextInput>div>input, .stSelectbox>div>div>div {
+            border-radius: 8px !important;
+            border: 1.5px solid var(--earth-accent) !important;
+            background: var(--earth-highlight) !important;
+            color: var(--earth-primary) !important;
+        }
+        .stButton>button:hover {
+            background: var(--earth-primary) !important;
+            color: #fff !important;
+        }
+        .stTabs [data-baseweb="tab"] {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--earth-primary);
+        }
+        .stSidebar {
+            background: var(--earth-bg2);
+            border-right: 2px solid var(--earth-accent);
+        }
+        .stSidebar .stHeader, .stSidebar .stSubheader {
+            color: var(--earth-primary);
+        }
+        .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+        /* Custom header background */
+        .stMarkdown h1 {
+            background: linear-gradient(90deg, var(--earth-accent) 0%, var(--earth-secondary) 100%);
+            color: #fff !important;
+            padding: 0.5em 1em;
+            border-radius: 12px;
+            margin-bottom: 1.2em;
+            box-shadow: 0 2px 8px rgba(138, 120, 78, 0.10);
+            display: inline-block;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            background: var(--earth-bg2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--earth-accent);
+            border-radius: 8px;
+        }
+        </style>
+    ''', unsafe_allow_html=True)
+
 # --- Auth Section ---
 def login_page():
     st.title("🔐 Login IMDb Dashboard")
@@ -42,36 +118,11 @@ def login_page():
 
 # --- Main Dashboard ---
 def main_dashboard():
+    inject_custom_css()
     sidebar.show_header()
     df = sidebar.load_movie_data()
     sidebar.filter_and_display(df)
-    st.header("🎬 Rekomendasi Film")
     rekom_df = load_data()
-    # --- Rekomendasi Otomatis Berdasarkan Histori atau Rating Tertinggi ---
-    st.subheader("Rekomendasi Otomatis untuk Kamu")
-    if 'search_history' in st.session_state and st.session_state['search_history']:
-        last_title = st.session_state['search_history'][-1]
-        filtered = rekom_df[rekom_df['title'].str.lower().str.contains(last_title.lower())]
-        if not filtered.empty:
-            genre_pref = filtered.iloc[0]['genres'].split(', ')[0]
-            st.write(f"Karena kamu suka film {last_title}, berikut rekomendasi genre {genre_pref}:")
-            genre_recs = rekom_df[rekom_df['genres'].str.contains(genre_pref)].sort_values(by='rating', ascending=False)
-            genre_recs = genre_recs.copy()
-            genre_recs['year'] = genre_recs['year'].astype(int)
-            genre_recs['rating'] = genre_recs['rating'].astype(float).round(1)
-            st.table(genre_recs[['title', 'year', 'genres', 'rating']].head(10))
-        else:
-            st.info("Histori tidak ditemukan di data, berikut rekomendasi film rating tertinggi:")
-            top_recs = rekom_df.sort_values(by='rating', ascending=False).copy()
-            top_recs['year'] = top_recs['year'].astype(int)
-            top_recs['rating'] = top_recs['rating'].astype(float).round(1)
-            st.table(top_recs[['title', 'year', 'genres', 'rating']].head(10))
-    else:
-        st.info("Belum ada histori pencarian. Berikut rekomendasi film rating tertinggi:")
-        top_recs = rekom_df.sort_values(by='rating', ascending=False).copy()
-        top_recs['year'] = top_recs['year'].astype(int)
-        top_recs['rating'] = top_recs['rating'].astype(float).round(1)
-        st.table(top_recs[['title', 'year', 'genres', 'rating']].head(10))
     # --- Mood & Genre Recommendation ---
     st.header("😊 Rekomendasi Berdasarkan Mood & Genre")
     mood_map = {
