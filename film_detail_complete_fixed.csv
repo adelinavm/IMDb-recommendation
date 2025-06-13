@@ -1,0 +1,50 @@
+tconst,title,year,genres,rating,numVotes
+tt0111161,The Shawshank Redemption,1994.0,Drama,9.3,3055462
+tt0068646,The Godfather,1972.0,"Crime, Drama",9.2,2133122
+tt0071562,The Godfather Part II,1974.0,"Crime, Drama",9.0,1435280
+tt0468569,The Dark Knight,2008.0,"Action, Crime, Drama, Thriller",9.0,3030607
+tt0050083,12 Angry Men,1957.0,"Crime, Drama",9.0,930799
+tt0108052,Schindler's List,1993.0,"Biography, Drama, History",9.0,1529079
+tt0167260,The Lord of the Rings: The Return of the King,2003.0,"Adventure, Drama, Fantasy",9.0,2085007
+tt0110912,Pulp Fiction,1994.0,"Crime, Drama",8.8,2342660
+tt0060196,"The Good, the Bad and the Ugly",1966.0,"Adventure, Drama, Western",8.8,857663
+tt0120737,The Lord of the Rings: The Fellowship of the Ring,2001.0,"Adventure, Drama, Fantasy",8.9,2115235
+tt0137523,Fight Club,1999.0,"Crime, Drama, Thriller",8.8,2474696
+tt0109830,Forrest Gump,1994.0,"Drama, Romance",8.8,2387302
+tt1375666,Inception,2010.0,"Action, Adventure, Sci-Fi, Thriller",8.8,2693049
+tt0167261,The Lord of the Rings: The Two Towers,2002.0,"Adventure, Drama, Fantasy",8.8,1879472
+tt0080684,Star Wars: Episode V - The Empire Strikes Back,1980.0,"Action, Adventure, Fantasy, Sci-Fi",8.7,1448014
+tt0133093,The Matrix,1999.0,"Action, Sci-Fi",8.7,2161924
+tt0099685,Goodfellas,1990.0,"Biography, Crime, Drama",8.7,1330914
+tt0073486,One Flew Over the Cuckoo's Nest,1975.0,Drama,8.7,1120611
+tt0047478,Seven Samurai,1954.0,"Action, Drama",8.6,386192
+tt0114369,Se7en,1995.0,"Crime, Drama, Mystery, Thriller",8.6,1917801
+tt0038650,It's a Wonderful Life,1946.0,"Drama, Family, Fantasy, Romance",8.6,529213
+tt0102926,The Silence of the Lambs,1991.0,"Crime, Drama, Horror, Thriller",8.6,1641551
+tt0076759,Star Wars: Episode IV - A New Hope,1977.0,"Action, Adventure, Fantasy, Sci-Fi",8.6,1515210
+tt0317248,City of God,2002.0,"Crime, Drama",8.6,839811
+tt0118799,Life Is Beautiful,1997.0,"Comedy, Drama, Romance, War",8.6,780822
+tt0114814,The Usual Suspects,1995.0,"Crime, Drama, Mystery, Thriller",8.5,1192940
+tt0245429,Spirited Away,2001.0,"Animation, Adventure, Family, Fantasy, Mystery",8.6,914372
+tt0120815,Saving Private Ryan,1998.0,"Drama, War",8.6,1574678
+tt0110413,Léon: The Professional,1994.0,"Action, Crime, Drama, Thriller",8.5,1306201
+tt0816692,Interstellar,2014.0,"Adventure, Drama, Sci-Fi",8.7,2355957
+tt0120689,The Green Mile,1999.0,"Crime, Drama, Fantasy, Mystery",8.6,1490819
+tt0056058,Harakiri,1962.0,"Drama, Mystery",8.6,80479
+tt0120586,American History X,1998.0,"Crime, Drama",8.5,1234017
+tt0027977,Modern Times,1936.0,"Comedy, Drama, Romance",8.5,274015
+tt0054215,Psycho,1960.0,"Drama, Horror, Mystery, Thriller",8.5,754976
+tt0021749,City Lights,1931.0,"Comedy, Drama, Romance",8.5,207708
+tt0253474,The Pianist,2002.0,"Biography, Drama, Music, War",8.5,971215
+tt2582802,Whiplash,2014.0,"Drama, Music",8.5,1079449
+tt1675434,The Intouchables,2011.0,"Comedy, Drama",8.5,981689
+tt0172495,Gladiator,2000.0,"Action, Adventure, Drama",8.5,1766253
+tt0482571,The Prestige,2006.0,"Drama, Mystery, Sci-Fi, Thriller",8.5,1519573
+tt0407887,The Departed,2006.0,"Crime, Drama, Thriller",8.5,1492514
+tt2584384,Jojo Rabbit,2019.0,"Comedy, Drama, War",7.9,468922
+tt0034583,Casablanca,1942.0,"Drama, Romance, War",8.5,633917
+tt0090605,Aliens,1986.0,"Action, Adventure, Horror, Sci-Fi, Thriller",8.4,810996
+tt1853728,Django Unchained,2012.0,"Drama, Western",8.5,1797432
+tt0910970,WALL·E,2008.0,"Animation, Adventure, Family, Sci-Fi",8.4,1265292
+tt4154756,Avengers: Infinity War,2018.0,"Action, Adventure, Sci-Fi",8.4,1293114
+tt4633694,Spider-Man: Into the Spider-Verse,2018.0,"Animation, Action, Adventure, Comedy, Family, Fantasy, Sci-Fi",8.4,734895
