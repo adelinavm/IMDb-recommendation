@@ -3,7 +3,8 @@ import streamlit as st
 import pandas as pd
 
 def show_header():
-    st.title("🎬 IMDb Movie Dashboard - 1 Adik 4 Kakak")
+    # Tidak ada judul di sidebar
+    pass
 
 # Load data CSV sekali saja di sini
 def load_movie_data():
@@ -17,7 +18,8 @@ def load_movie_data():
     return df
 
 def filter_and_display(df):
-    st.title("🎬 IMDb Movie Dashboard - 1 Adik 4 Kakak")
+    # Judul utama di atas filter, tebal dan besar
+    st.markdown('<h1 style="font-size:2.2rem;font-weight:700;margin-bottom:0.5em;">🎬 IMDb Movie Dashboard - 1 Adik 4 Kakak</h1>', unsafe_allow_html=True)
     st.subheader("📄 Film Sesuai Filter", anchor=False)
     st.sidebar.header("🔎 Filter Film")
     min_year = int(df['year'].min())

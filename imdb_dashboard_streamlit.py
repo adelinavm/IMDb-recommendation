@@ -2,6 +2,7 @@ import streamlit as st
 st.set_page_config(layout="wide")
 import pandas as pd
 import os
+import plotly.express as px
 from auth_utils import authenticate_user, register_user
 import sidebar
 
@@ -44,10 +45,9 @@ def main_dashboard():
     sidebar.show_header()
     df = sidebar.load_movie_data()
     sidebar.filter_and_display(df)
-    # --- Movie Recommendation Section ---
     st.header("🎬 Rekomendasi Film")
     rekom_df = load_data()
-    # --- Rekomendasi Otomatis Berdasarkan Histori atau Rating Tertinggi (dari fungsi_rekom.py) ---
+    # --- Rekomendasi Otomatis Berdasarkan Histori atau Rating Tertinggi ---
     st.subheader("Rekomendasi Otomatis untuk Kamu")
     if 'search_history' in st.session_state and st.session_state['search_history']:
         last_title = st.session_state['search_history'][-1]
@@ -56,13 +56,22 @@ def main_dashboard():
             genre_pref = filtered.iloc[0]['genres'].split(', ')[0]
             st.write(f"Karena kamu suka film {last_title}, berikut rekomendasi genre {genre_pref}:")
             genre_recs = rekom_df[rekom_df['genres'].str.contains(genre_pref)].sort_values(by='rating', ascending=False)
+            genre_recs = genre_recs.copy()
+            genre_recs['year'] = genre_recs['year'].astype(int)
+            genre_recs['rating'] = genre_recs['rating'].astype(float).round(1)
             st.table(genre_recs[['title', 'year', 'genres', 'rating']].head(10))
         else:
-            st.info("Belum ada data genre dari histori, menampilkan rekomendasi rating tertinggi.")
-            st.table(rekom_df.sort_values(by='rating', ascending=False)[['title', 'year', 'genres', 'rating']].head(10))
+            st.info("Histori tidak ditemukan di data, berikut rekomendasi film rating tertinggi:")
+            top_recs = rekom_df.sort_values(by='rating', ascending=False).copy()
+            top_recs['year'] = top_recs['year'].astype(int)
+            top_recs['rating'] = top_recs['rating'].astype(float).round(1)
+            st.table(top_recs[['title', 'year', 'genres', 'rating']].head(10))
     else:
-        st.info("Belum ada histori, berikut rekomendasi film rating tertinggi:")
-        st.table(rekom_df.sort_values(by='rating', ascending=False)[['title', 'year', 'genres', 'rating']].head(10))
+        st.info("Belum ada histori pencarian. Berikut rekomendasi film rating tertinggi:")
+        top_recs = rekom_df.sort_values(by='rating', ascending=False).copy()
+        top_recs['year'] = top_recs['year'].astype(int)
+        top_recs['rating'] = top_recs['rating'].astype(float).round(1)
+        st.table(top_recs[['title', 'year', 'genres', 'rating']].head(10))
     # --- Mood & Genre Recommendation ---
     st.header("😊 Rekomendasi Berdasarkan Mood & Genre")
     mood_map = {
@@ -74,7 +83,9 @@ def main_dashboard():
         "Badmood": ["Comedy", "Adventure", "Fantasy"]
     }
     mood = st.selectbox("Pilih Mood Kamu", list(mood_map.keys()))
-    user_genre = st.text_input("(Opsional) Tambah Genre Favoritmu", "").strip().title()
+    # Dropdown genre dari seluruh genre unik
+    all_genres = sorted(set(g for sublist in rekom_df['genres'].str.split(', ') for g in sublist))
+    user_genre = st.selectbox("(Opsional) Tambah Genre Favoritmu", [""] + all_genres)
     target_genres = mood_map[mood].copy()
     if user_genre:
         target_genres.append(user_genre)
@@ -83,38 +94,38 @@ def main_dashboard():
     exploded = exploded.explode('genres')
     recommend = exploded[exploded['genres'].isin(target_genres)]
     recommend = recommend.sort_values(by="rating", ascending=False).drop_duplicates("title")
-    st.markdown(f"Top rekomendasi untuk mood **{mood}**{f' & genre **{user_genre}**' if user_genre else ''}:")
     if not recommend.empty:
+        recommend = recommend.copy()
         recommend['year'] = recommend['year'].astype(int)
+        recommend['rating'] = recommend['rating'].astype(float).round(1)
+        st.markdown(f"Top rekomendasi untuk mood **{mood}**{f' & genre **{user_genre}**' if user_genre else ''}:")
         st.table(recommend[['title', 'year', 'genres', 'rating']].head(10))
     else:
         st.info("Tidak ada rekomendasi untuk mood/genre tersebut.")
-    
-    # --- Trending Movies This Year ---
+    # --- Trending Movies This Year (Bar Chart) ---
     st.subheader("🔥 Film Trending Tahun Ini")
-
-    latest_year = df['year'].max()
+    latest_year = int(df['year'].max())
     top_year = df[df['year'] == latest_year]
     top_year = top_year.sort_values(by='numVotes', ascending=False)
-
+    top_year['year'] = top_year['year'].astype(int)
+    top_year['rating'] = top_year['rating'].astype(float).round(1)
     fig_trend = px.bar(
         top_year.head(10),
         x='title',
         y='numVotes',
         color='rating',
-        hover_data=['title', 'rating', 'numVotes'],
+        hover_data={'title': True, 'rating': ':.1f', 'numVotes': ':,'},
         labels={'title': 'Judul Film', 'numVotes': 'Jumlah Suara', 'rating': 'Rating'},
-        title=f'Film dengan suara terbanyak di tahun {int(latest_year)}'
+        title=f'Film dengan suara terbanyak di tahun {latest_year}'
     )
     fig_trend.update_layout(xaxis_tickangle=-45)
     st.plotly_chart(fig_trend, use_container_width=True)
-
-    # --- Trend Visualization (linechart) ---
+    # --- Trend Visualization (Line Chart) ---
     st.header("📈 Tren Film Saat Ini")
     latest_year = int(exploded['year'].max())
     trend_data = exploded[exploded['year'] >= latest_year - 5]
     trend = trend_data.groupby(['year', 'genres']).size().reset_index(name='count')
-    import plotly.express as px
+    trend['year'] = trend['year'].astype(int)
     all_genres = sorted(trend['genres'].unique())
     selected_genre = st.selectbox("Pilih Genre (Tren)", ["Semua Genre"] + all_genres)
     if selected_genre != "Semua Genre":
@@ -127,7 +138,7 @@ def main_dashboard():
         y='count',
         color='genres',
         markers=True,
-        hover_data=['genres', 'count'],
+        hover_data={'genres': True, 'count': ':,', 'year': ':d'},
         labels={'count': 'Jumlah Film', 'year': 'Tahun', 'genres': 'Genre'},
         title='Jumlah Film per Genre (5 Tahun Terakhir)'
     )
@@ -138,9 +149,29 @@ def main_dashboard():
         top_genre = top_genre.sort_values(by='numVotes', ascending=False).drop_duplicates('title')
         top_genre['year'] = top_genre['year'].astype(int)
         top_genre['rating'] = top_genre['rating'].astype(float).round(1)
+        top_genre['numVotes'] = top_genre['numVotes'].astype(int)
         top_genre_display = top_genre[['title', 'year', 'rating', 'numVotes']].head(10)
         st.table(top_genre_display)
-
+    # --- Rata-Rata Rating per Genre (Bar Chart Horizontal) ---
+    st.header("📊 Rata-Rata Rating per Genre")
+    genre_rating = exploded.groupby('genres')['rating'].mean().sort_values(ascending=False).reset_index()
+    genre_rating['rating'] = genre_rating['rating'].astype(float).round(2)
+    if exploded.empty or genre_rating.empty:
+        st.warning("Data tidak tersedia untuk visualisasi genre.")
+    else:
+        fig = px.bar(
+            genre_rating,
+            x='rating',
+            y='genres',
+            orientation='h',
+            color='rating',
+            color_continuous_scale='viridis',
+            hover_data={'genres': True, 'rating': ':.2f'},
+            labels={'rating': 'Rata-Rata Rating', 'genres': 'Genre'},
+            title='Rata-Rata Rating per Genre'
+        )
+        fig.update_layout(yaxis={'categoryorder':'total ascending'})
+        st.plotly_chart(fig, use_container_width=True)
 
 # --- App Entry Point ---
 if 'logged_in' not in st.session_state or not st.session_state['logged_in']:
