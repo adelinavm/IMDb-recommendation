@@ -2,6 +2,8 @@ import os
 import streamlit as st
 import pandas as pd
 
+st.set_page_config(layout="wide")
+
 def show_header():
     st.title("🎬 IMDb Movie Dashboard - 1 Adik 4 Kakak")
 
