@@ -16,31 +16,9 @@ def load_data():
 
 df = load_data()
 
-# --- Rekomendasi Berdasarkan Histori Pencarian Judul ---
-st.header("🔎 Rekomendasi Berdasarkan Histori Pencarian Judul")
-if 'search_history' not in st.session_state:
-    st.session_state['search_history'] = []
-
-search_title = st.text_input("Cari Judul Film")
-if search_title:
-    st.session_state['search_history'].append(search_title)
-    filtered = df[df['title'].str.lower().str.contains(search_title.lower())]
-    st.write(f"Hasil pencarian untuk: {search_title}")
-    st.dataframe(filtered[['title', 'year', 'genres', 'rating', 'numVotes']], use_container_width=True)
-    # Rekomendasi berdasarkan judul yang mirip
-    if not filtered.empty:
-        genre_pref = filtered.iloc[0]['genres'].split(', ')[0]
-        st.write(f"Rekomendasi film lain dengan genre serupa ({genre_pref}):")
-        genre_recs = df[df['genres'].str.contains(genre_pref)].sort_values(by='rating', ascending=False)
-        st.table(genre_recs[['title', 'year', 'genres', 'rating']].head(5))
-
-if st.session_state['search_history']:
-    st.markdown("**Histori Pencarian Judul:**")
-    st.write(st.session_state['search_history'])
-
 # --- Rekomendasi Otomatis Berdasarkan Histori atau Rating Tertinggi ---
 st.header("🎬 Rekomendasi Otomatis untuk Kamu")
-if st.session_state['search_history']:
+if 'search_history' in st.session_state and st.session_state['search_history']:
     # Ambil genre dari histori terakhir
     last_title = st.session_state['search_history'][-1]
     filtered = df[df['title'].str.lower().str.contains(last_title.lower())]
