@@ -47,23 +47,22 @@ def main_dashboard():
     # --- Movie Recommendation Section ---
     st.header("🎬 Rekomendasi Film")
     rekom_df = load_data()
-    # --- Search & Mood Recommendation (fungsi_rekom) ---
-    if 'search_history' not in st.session_state:
-        st.session_state['search_history'] = []
-    search_title = st.text_input("Cari Judul Film (Rekomendasi)")
-    if search_title:
-        st.session_state['search_history'].append(search_title)
-        filtered = rekom_df[rekom_df['title'].str.lower().str.contains(search_title.lower())]
-        st.write(f"Hasil pencarian untuk: {search_title}")
-        st.dataframe(filtered[['title', 'year', 'genres', 'rating', 'numVotes']], use_container_width=True)
+    # --- Rekomendasi Otomatis Berdasarkan Histori atau Rating Tertinggi (dari fungsi_rekom.py) ---
+    st.subheader("Rekomendasi Otomatis untuk Kamu")
+    if 'search_history' in st.session_state and st.session_state['search_history']:
+        last_title = st.session_state['search_history'][-1]
+        filtered = rekom_df[rekom_df['title'].str.lower().str.contains(last_title.lower())]
         if not filtered.empty:
             genre_pref = filtered.iloc[0]['genres'].split(', ')[0]
-            st.write(f"Rekomendasi film lain dengan genre serupa ({genre_pref}):")
+            st.write(f"Karena kamu suka film {last_title}, berikut rekomendasi genre {genre_pref}:")
             genre_recs = rekom_df[rekom_df['genres'].str.contains(genre_pref)].sort_values(by='rating', ascending=False)
-            st.table(genre_recs[['title', 'year', 'genres', 'rating']].head(5))
-    if st.session_state['search_history']:
-        st.markdown("**Histori Pencarian Judul:**")
-        st.write(st.session_state['search_history'])
+            st.table(genre_recs[['title', 'year', 'genres', 'rating']].head(10))
+        else:
+            st.info("Belum ada data genre dari histori, menampilkan rekomendasi rating tertinggi.")
+            st.table(rekom_df.sort_values(by='rating', ascending=False)[['title', 'year', 'genres', 'rating']].head(10))
+    else:
+        st.info("Belum ada histori, berikut rekomendasi film rating tertinggi:")
+        st.table(rekom_df.sort_values(by='rating', ascending=False)[['title', 'year', 'genres', 'rating']].head(10))
     # --- Mood & Genre Recommendation ---
     st.header("😊 Rekomendasi Berdasarkan Mood & Genre")
     mood_map = {
