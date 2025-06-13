@@ -84,6 +84,7 @@ def main_dashboard():
     exploded = exploded.explode('genres')
     recommend = exploded[exploded['genres'].isin(target_genres)]
     recommend = recommend.sort_values(by="rating", ascending=False).drop_duplicates("title")
+    recommend['rating'] = recommend['rating'].round(1)  # Format rating 1 digit desimal
     st.markdown(f"Top rekomendasi untuk mood **{mood}**{f' & genre **{user_genre}**' if user_genre else ''}:")
     if not recommend.empty:
         recommend['year'] = recommend['year'].astype(int)
@@ -118,7 +119,7 @@ def main_dashboard():
         top_genre = exploded[exploded['genres'] == selected_genre]
         top_genre = top_genre.sort_values(by='numVotes', ascending=False).drop_duplicates('title')
         top_genre['year'] = top_genre['year'].astype(int)
-        top_genre['rating'] = top_genre['rating'].astype(float).round(1)
+        top_genre['rating'] = top_genre['rating'].map(lambda x: f"{x:.1f}")
         top_genre_display = top_genre[['title', 'year', 'rating', 'numVotes']].head(10)
         st.table(top_genre_display)
 
