@@ -16,8 +16,6 @@ def load_data():
 
 df = load_data()
 
-st.title("🎬 IMDb Movie Recommendation")
-
 # --- Rekomendasi Berdasarkan Histori Pencarian Judul ---
 st.header("🔎 Rekomendasi Berdasarkan Histori Pencarian Judul")
 if 'search_history' not in st.session_state:
@@ -39,6 +37,24 @@ if search_title:
 if st.session_state['search_history']:
     st.markdown("**Histori Pencarian Judul:**")
     st.write(st.session_state['search_history'])
+
+# --- Rekomendasi Otomatis Berdasarkan Histori atau Rating Tertinggi ---
+st.header("🎬 Rekomendasi Otomatis untuk Kamu")
+if st.session_state['search_history']:
+    # Ambil genre dari histori terakhir
+    last_title = st.session_state['search_history'][-1]
+    filtered = df[df['title'].str.lower().str.contains(last_title.lower())]
+    if not filtered.empty:
+        genre_pref = filtered.iloc[0]['genres'].split(', ')[0]
+        st.write(f"Karena kamu suka film {last_title}, berikut rekomendasi genre {genre_pref}:")
+        genre_recs = df[df['genres'].str.contains(genre_pref)].sort_values(by='rating', ascending=False)
+        st.table(genre_recs[['title', 'year', 'genres', 'rating']].head(10))
+    else:
+        st.info("Belum ada data genre dari histori, menampilkan rekomendasi rating tertinggi.")
+        st.table(df.sort_values(by='rating', ascending=False)[['title', 'year', 'genres', 'rating']].head(10))
+else:
+    st.info("Belum ada histori, berikut rekomendasi film rating tertinggi:")
+    st.table(df.sort_values(by='rating', ascending=False)[['title', 'year', 'genres', 'rating']].head(10))
 
 # --- Rekomendasi Berdasarkan Mood & Genre ---
 st.header("😊 Rekomendasi Berdasarkan Mood & Genre")
