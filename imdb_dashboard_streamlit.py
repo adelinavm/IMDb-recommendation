@@ -123,6 +123,7 @@ def main_dashboard():
     df = sidebar.load_movie_data()
     sidebar.filter_and_display(df)
     rekom_df = load_data()
+    
     # --- Mood & Genre Recommendation ---
     st.header("😊 Rekomendasi Berdasarkan Mood & Genre")
     mood_map = {
